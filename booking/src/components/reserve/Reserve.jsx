@@ -61,13 +61,14 @@ const Reserve = ({ setOpen, hotelId }) => {
 
     const body = {
       products: data
+      
     }
     
 
     const headers = {
       "Content-Type": "application/json"
     }
-    const response = await fetch("/create-checkout-session",{
+    const response = await fetch("http://localhost:8800/api/create-checkout-session",{
       method: "POST",
       headers: headers,
       body:JSON.stringify(body)
@@ -90,7 +91,7 @@ const Reserve = ({ setOpen, hotelId }) => {
     try {
       await Promise.all(
         selectedRooms.map((roomId) => {
-          const res = axios.put(`/rooms/availability/${roomId}`, {
+          const res = axios.put(`http://localhost:8800/api/rooms/availability/${roomId}`, {
             dates: alldates,
           });
           return res.data;
@@ -111,7 +112,7 @@ const Reserve = ({ setOpen, hotelId }) => {
           onClick={() => setOpen(false)}
         />
         <span>Select your rooms:</span>
-        {data.map((item) => (
+        {data.length!==0?data.map((item) => (
           <div className="rItem" key={item._id}>
             <div className="rItemInfo">
               <div className="rTitle">{item.title}</div>
@@ -135,7 +136,7 @@ const Reserve = ({ setOpen, hotelId }) => {
               ))}
             </div>
           </div>
-        ))}
+        )):<>Loading...</>}
         {/* <button onClick={handleClick} className="rButton">
           Reserve Now!
         </button> */}

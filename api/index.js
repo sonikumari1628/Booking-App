@@ -8,16 +8,14 @@ import hotelsRoute from "./routes/hotels.js";
 import roomsRoute from "./routes/rooms.js";
 import usersRoute from "./routes/users.js"; 
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 const stripe = require("stripe")("sk_test_51N11oxSGwsfgNGIl7yfXKVDRYO4qiyJfiPlKjtq4GI5Go9zdELEAwLZJyAUz3k0DZ7qwDxvXEOlI66FJKc6BI7C4007ZFJL0Sa")
 
-
-const app = express();
 dotenv.config()
-
 const connect = async () => {
     try {
         await mongoose.connect(process.env.MONGO);
@@ -26,15 +24,13 @@ const connect = async () => {
       handleError(error)
     }
 };
-
-mongoose.connection.on("disconnected", () => {
-    console.log("mongoDB disconnected!")
-})
-
-mongoose.connection.on("connected", () => {
-    console.log("mongoDB connected!")
-})
-
+const app = express();
+app.use(
+    cors({
+      origin: "*",
+      methods: ["GET", "POST", "PUT", "DELETE"],
+    })
+  );
 //middlewares
 app.use(cookieParser())
 app.use(express.json())
@@ -44,11 +40,21 @@ app.use("/api/hotels", hotelsRoute);
 app.use("/api/rooms", roomsRoute);
 app.use("/api/users", usersRoute);
 
+
+mongoose.connection.on("disconnected", () => {
+    console.log("mongoDB disconnected!")
+})
+
+mongoose.connection.on("connected", () => {
+    console.log("mongoDB connected!")
+})
+
 //deployment
 const __dirname1 = path.resolve();
 
 if (process.env.NODE_ENV === "production") {
   console.log("in production");
+  console.log("sdjcnskzs");
   app.use(express.static(path.join(__dirname1, "/booking/build")));
 
   app.get("*", (req, res) =>
